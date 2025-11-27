@@ -1,0 +1,350 @@
+
+
+===========================================================================================================================================
+
+3(B)
+index.js
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import { BrowserRouter } from 'react-router-dom';
+import './index.css';
+import App from './App';
+import reportWebVitals from './reportWebVitals';
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(
+  <BrowserRouter>
+    <App />
+  </BrowserRouter>
+);
+
+reportWebVitals();
+app.js
+import { Routes, Route, Link } from "react-router-dom";
+import Home from "./pages/Home";
+import About from "./pages/About";
+import Contact from "./pages/Contact";
+
+export default function App() {
+  return (
+    <div>
+      <nav>
+        <Link to="/">Home</Link> |{" "}
+        <Link to="/about">About</Link> |{" "}
+        <Link to="/contact">Contact</Link>
+      </nav>
+
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/contact" element={<Contact />} />
+      </Routes>
+    </div>
+  );
+}
+
+home.js
+import React from "react";
+
+export default function Home() {
+  return (
+    <div>
+      <h1>Home Page</h1>
+      <p>Welcome to the Home page of my React App!</p>
+    </div>
+  );
+}
+
+about.js
+import React from "react";
+
+export default function About() {
+  return (
+    <div>
+      <h1>About Page</h1>
+      <p>This page tells you more about our React App.</p>
+    </div>
+  );
+}
+
+===========================================================================================================================================
+3(C)
+RegistrationForm.js
+import React, { useState } from "react";
+
+export default function RegistrationForm() {
+  // State to hold form values
+  const [form, setForm] = useState({ name: "", email: "" });
+
+  // Handle input change
+  function handleChange(e) {
+    const { name, value } = e.target;
+    setForm({ ...form, [name]: value });
+  }
+
+  // Handle form submission
+  function handleSubmit(e) {
+    e.preventDefault();
+    alert(`Name: ${form.name}\nEmail: ${form.email}`);
+  }
+
+  return (
+    <div style={{ padding: 20 }}>
+      <h2>Registration Form</h2>
+      <form onSubmit={handleSubmit}>
+        <label>
+          Name:{" "}
+          <input
+            type="text"
+            name="name"
+            value={form.name}
+            onChange={handleChange}
+            placeholder="Enter your name"
+            required
+          />
+        </label>
+        <br /><br />
+        <label>
+          Email:{" "}
+          <input
+            type="email"
+            name="email"
+            value={form.email}
+            onChange={handleChange}
+            placeholder="Enter your email"
+            required
+          />
+        </label>
+        <br /><br />
+        <button type="submit">Submit</button>
+      </form>
+    </div>
+  );
+}
+
+app.js
+import React from "react";
+import RegistrationForm from "./components/RegistrationForm";
+
+export default function App() {
+  return (
+    <div style={{ textAlign: "center", marginTop: "50px" }}>
+      <h1>React Form Example</h1>
+      <RegistrationForm />
+    </div>
+  );
+}
+===========================================================================================================================================
+3(d)
+counterslice.js
+import { createSlice } from "@reduxjs/toolkit";
+
+const counterSlice = createSlice({
+  name: "counter",
+  initialState: { value: 0 },
+  reducers: {
+    increment: (state) => {
+      state.value += 1;
+    },
+    decrement: (state) => {
+      state.value -= 1;
+    },
+    reset: (state) => {
+      state.value = 0;
+    },
+  },
+});
+
+export const { increment, decrement, reset } = counterSlice.actions;
+export default counterSlice.reducer;
+
+store.js
+import { configureStore } from "@reduxjs/toolkit";
+import counterReducer from "./counterSlice";
+
+export const store = configureStore({
+  reducer: {
+    counter: counterReducer,
+  },
+});
+
+counter.js
+import React from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { increment, decrement, reset } from "../store/counterSlice";
+
+export default function Counter() {
+  const value = useSelector((state) => state.counter.value);
+  const dispatch = useDispatch();
+
+  return (
+    <div style={{ padding: 20, textAlign: "center" }}>
+      <h2>Redux Counter Example</h2>
+      <h3>Counter Value: {value}</h3>
+      <button onClick={() => dispatch(increment())}>+1</button>{" "}
+      <button onClick={() => dispatch(decrement())}>-1</button>{" "}
+      <button onClick={() => dispatch(reset())}>Reset</button>
+    </div>
+  );
+}
+
+app.js
+import React from "react";
+import Counter from "./components/Counter";
+
+export default function App() {
+  return (
+    <div style={{ textAlign: "center", marginTop: "50px" }}>
+      <h1>React + Redux Counter Application</h1>
+      <Counter />
+    </div>
+  );
+}
+
+index.js
+import React from "react";
+import ReactDOM from "react-dom/client";
+import App from "./App";
+import { Provider } from "react-redux";
+import { store } from "./store/store";
+
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(
+  <Provider store={store}>
+    <App />
+  </Provider>
+);
+
+===========================================================================================================================================
+3(e)
+import { useState, useEffect } from "react";
+import axios from "axios";
+
+export default function PostsList() {
+  const [posts, setPosts] = useState([]);
+
+  // Fetch data from API when the component loads
+  useEffect(() => {
+    axios
+      .get("https://jsonplaceholder.typicode.com/posts?_limit=5")
+      .then((res) => setPosts(res.data))
+      .catch((err) => console.error("Error fetching posts:", err));
+  }, []);
+
+  return (
+    <div style={{ padding: "20px" }}>
+      <h3>Posts</h3>
+      <ul>
+        {posts.map((p) => (
+          <li key={p.id}>
+            <b>{p.title}</b>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+app.js
+import React from "react";
+import PostsList from "./components/PostsList";
+
+export default function App() {
+  return (
+    <div style={{ textAlign: "center", marginTop: "40px" }}>
+      <h1>React Axios Data Fetch Example</h1>
+      <PostsList />
+    </div>
+  );
+}
+
+
+===========================================================================================================================================
+
+1. Student Table
+CREATE TABLE Student (
+  StudentID INT PRIMARY KEY,
+  StudentName VARCHAR(50)
+);
+
+2. Teacher Table
+CREATE TABLE Teacher (
+  TeacherID INT PRIMARY KEY,
+  TeacherName VARCHAR(50)
+);
+
+3. Course Table
+CREATE TABLE Course (
+  CourseID INT PRIMARY KEY,
+  CourseName VARCHAR(50),
+  TeacherID INT,
+  FOREIGN KEY (TeacherID) REFERENCES Teacher(TeacherID)
+);
+
+4. Enrollment Table
+CREATE TABLE Enrollment (
+  StudentID INT,
+  CourseID INT,
+  FOREIGN KEY (StudentID) REFERENCES Student(StudentID),
+  FOREIGN KEY (CourseID) REFERENCES Course(CourseID)
+);
+
+Insert Sample Data (Easy Names)
+INSERT INTO Student VALUES
+(1, 'Charan'),
+(2, 'Lokesh');
+
+INSERT INTO Teacher VALUES
+(101, 'Mr. Rao'),
+(102, 'Mr. Reddy');
+
+INSERT INTO Course VALUES
+(201, 'DBMS', 101),
+(202, 'Java', 102);
+
+INSERT INTO Enrollment VALUES
+(1, 201),
+(2, 202);
+
+ Display Combined Data Using JOIN
+SELECT s.StudentName, c.CourseName, t.TeacherName
+FROM Enrollment e
+JOIN Student s ON e.StudentID = s.StudentID
+JOIN Course c ON e.CourseID = c.CourseID
+JOIN Teacher t ON c.TeacherID = t.TeacherID;
+
+===========================================================================================================================================
+
+-- Step 1: Select Database
+USE college;
+
+-- Step 2: Create Table
+CREATE TABLE Students (
+  StudentID INT PRIMARY KEY,
+  StudentName VARCHAR(50),
+  Department VARCHAR(50)
+);
+
+-- Step 3: CRUD Operations
+
+-- CREATE (Insert Data)
+INSERT INTO Students VALUES 
+(1, 'Charan', 'CSE'),
+(2, 'Lokesh', 'AI'),
+(3, 'Ravi', 'ECE');
+
+-- READ (View Data)
+SELECT * FROM Students;
+
+-- UPDATE (Modify Data)
+UPDATE Students
+SET Department = 'Data Science'
+WHERE StudentID = 2;
+
+SELECT * FROM Students;
+
+-- DELETE (Remove Data)
+DELETE FROM Students
+WHERE StudentID = 3;
+
+SELECT * FROM Students;
