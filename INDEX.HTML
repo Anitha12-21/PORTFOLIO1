@@ -324,16 +324,15 @@ import axios from "axios";
 export default function PostsList() {
   const [posts, setPosts] = useState([]);
 
-  // Fetch data from API when the component loads
   useEffect(() => {
     axios
       .get("https://jsonplaceholder.typicode.com/posts?_limit=5")
       .then((res) => setPosts(res.data))
-      .catch((err) => console.error("Error fetching posts:", err));
+      .catch((err) => console.error(err));
   }, []);
 
   return (
-    <div style={{ padding: "20px" }}>
+    <div>
       <h3>Posts</h3>
       <ul>
         {posts.map((p) => (
